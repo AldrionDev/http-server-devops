@@ -30,7 +30,7 @@ http-server-devops/
 ## Tasks
 
 - [x] Task 1: HTTP Server
-- [ ] Task 2: Dockerize
+- [x] Task 2: Dockerize
 - [ ] Task 3: CI/CD Pipeline
 - [ ] Task 4: Kubernetes Deployment
 - [ ] Task 5: Terraform Configuration
@@ -63,4 +63,34 @@ Run tests:
 
 ```bash
 go test ./...
+```
+
+## Docker Usage
+
+### Build image
+
+```bash
+docker build -t http-server-devops:local .
+```
+
+### Run container
+
+```bash
+docker run --rm -p 8080:8080 http-server-devops:local
+```
+
+### Test container
+
+```bash
+curl http://localhost:8080/
+```
+
+### Run with custom port
+
+```bash
+docker run --rm -p 9090:9090 -e PORT=9090 http-server-devops:local
+```
+
+```bash
+curl http://localhost:9090/
 ```
