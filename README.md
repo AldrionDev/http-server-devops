@@ -16,10 +16,13 @@ containerization, CI/CD, Kubernetes deployment, and Terraform infrastructure.
 
 ```text
 http-server-devops/
-├── .github/
+├── .github/            # GitHub Actions workflows
 │   └── workflows/
 │       └── docker-publish.yml
-├── k8s/                 # Kubernetes manifests
+├── k8s/                # Kubernetes manifests
+│   └── namespace.yaml
+│   └── deployment.yaml
+│   └── service.yaml
 ├── terraform/           # Terraform configuration
 ├── Dockerfile
 ├── go.mod
@@ -33,7 +36,7 @@ http-server-devops/
 - [x] Task 1: HTTP Server
 - [x] Task 2: Dockerize
 - [x] Task 3: CI/CD Pipeline
-- [ ] Task 4: Kubernetes Deployment
+- [x] Task 4: Kubernetes Deployment
 - [ ] Task 5: Terraform Configuration
 
 ## Installation & Usage
@@ -137,3 +140,83 @@ permissions:
 ```
 
 No external Docker registry credentials are required.
+
+## Kubernetes Deployment
+
+The application can be deployed to a local Kubernetes cluster using minikube.
+
+### Start minikube
+
+```bash
+minikube start -p http-server-devops
+```
+
+### Check cluster status
+
+```bash
+minikube status -p http-server-devops
+kubectl config current-context
+kubectl get nodes
+```
+
+### Deploy application
+
+```bash
+kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+```
+
+### Check resources
+
+```bash
+kubectl get all -n http-server-devops
+```
+
+### Access application
+
+```bash
+minikube service http-server -n http-server-devops --url -p http-server-devops
+```
+
+Use the returned URL:
+
+```bash
+curl <URL>
+```
+
+Expected response:
+
+```text
+Hello, World!
+```
+
+Health check
+
+```bash
+curl <URL>/health
+```
+
+Expected response:
+
+```text
+ok
+```
+
+### Remove deployment
+
+```bash
+kubectl delete namespace http-server-devops
+```
+
+### Delete local cluster
+
+```bash
+minikube delete -p http-server-devops
+```
+
+The deployment uses the released image:
+
+```text
+ghcr.io/aldriondev/http-server-devops:latest
+```
