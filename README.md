@@ -8,7 +8,7 @@ containerization, CI/CD, Kubernetes deployment, and Terraform infrastructure.
 - **Language:** Go
 - **Container:** Docker
 - **CI/CD:** GitHub Actions
-- **Registry:** Docker Hub
+- **Registry:** GitHub Container Registry
 - **Orchestration:** Kubernetes
 - **IaC:** Terraform
 
@@ -17,7 +17,8 @@ containerization, CI/CD, Kubernetes deployment, and Terraform infrastructure.
 ```text
 http-server-devops/
 ├── .github/
-│   └── workflows/       # CI/CD pipeline
+│   └── workflows/
+│       └── docker-publish.yml
 ├── k8s/                 # Kubernetes manifests
 ├── terraform/           # Terraform configuration
 ├── Dockerfile
@@ -31,7 +32,7 @@ http-server-devops/
 
 - [x] Task 1: HTTP Server
 - [x] Task 2: Dockerize
-- [ ] Task 3: CI/CD Pipeline
+- [x] Task 3: CI/CD Pipeline
 - [ ] Task 4: Kubernetes Deployment
 - [ ] Task 5: Terraform Configuration
 
@@ -94,3 +95,45 @@ docker run --rm -p 9090:9090 -e PORT=9090 http-server-devops:local
 ```bash
 curl http://localhost:9090/
 ```
+
+## CI/CD
+
+This project uses GitHub Actions to run tests, build the Docker image, and publish it to GitHub Container Registry.
+
+The workflow is defined in:
+
+```text
+.github/workflows/docker-publish.yml
+```
+
+On pull requests to `main`, the pipeline:
+
+- runs Go tests
+- builds the Docker image without publishing it
+
+On pushes to `main`, the pipeline:
+
+- runs Go tests
+- builds the Docker image
+- publishes the image to GitHub Container Registry
+
+Published image:
+
+```text
+ghcr.io/aldriondev/http-server-devops
+```
+
+Published tags:
+
+- `latest`
+- ghcr.io/aldriondev/http-server-devops:latest
+
+The workflow uses the built-in GITHUB_TOKEN with following permissions:
+
+```yaml
+permissions:
+  contents: read
+  packages: write
+```
+
+No external Docker registry credentials are required.
