@@ -37,7 +37,7 @@ http-server-devops/
 - [x] Task 2: Dockerize
 - [x] Task 3: CI/CD Pipeline
 - [x] Task 4: Kubernetes Deployment
-- [ ] Task 5: Terraform Configuration
+- [x] Task 5: Terraform Configuration
 
 ## Installation & Usage
 
@@ -220,3 +220,91 @@ The deployment uses the released image:
 ```text
 ghcr.io/aldriondev/http-server-devops:latest
 ```
+
+## Terraform Deployment
+
+The Kubernetes manifests can also be deployed using Terraform with the Kubernetes provider.
+
+Terraform uses the local kubeconfig context:
+
+```text
+http-server-devops
+```
+
+### start minikube
+
+```bash
+minikube start -p http-server-devops
+```
+
+### Check cluster status
+
+```bash
+minikube status -p http-server-devops
+kubectl config current-context
+kubectl get nodes
+```
+
+### Deploy application with Terraform
+
+```bash
+cd terraform
+terraform init
+terraform validate
+terraform plan
+terraform apply
+```
+
+### Check resources
+
+```bash
+kubectl get all -n http-server-devops
+```
+
+### Access application
+
+```bash
+minikube service http-server -n http-server-devops --url -p http-server-devops
+```
+
+Use the returned URL:
+
+```bash
+curl <URL>
+```
+
+Expected response:
+
+```text
+Hello, World!
+```
+
+Health check
+
+```bash
+curl <URL>/health
+```
+
+Expected response:
+
+```text
+ok
+```
+
+### Destroy resources
+
+```bash
+terraform destroy
+```
+
+### Delete local cluster
+
+```bash
+minikube delete -p http-server-devops
+```
+
+The Terraform configuration reuses the kubernetes yaml manifests from k8s/ directory.
+
+k8s/namespace.yaml
+k8s/deployment.yaml
+k8s/service.yaml
